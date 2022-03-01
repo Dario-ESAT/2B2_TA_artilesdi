@@ -1,0 +1,22 @@
+# Emulador de Gameboy Advance (vba)
+sudo apt-get install visualboyadvance 
+
+
+# Un editor de texto sencillo y practico
+sudo apt-get install gedit
+
+# Compilador clang, alternativa a gcc
+sudo apt-get install clang
+
+# Librerias SDL para desarrollo
+sudo apt-get install libsdl1.2-dev
+sudo apt-get install libsdl-image-1.3dev
+
+# Debuggers
+sudo apt-get install kdbg
+sudo apt-get install ddd
+sudo apt-get install valgrind
+
+# Editor grafico
+sudo apt-get install gimp
+
