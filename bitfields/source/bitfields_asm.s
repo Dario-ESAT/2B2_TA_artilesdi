@@ -50,8 +50,8 @@ Continue_X_Loop:
     @orr r12,r12,r6,lsl #10
     
     and r11,r10,r9          @ int r = back_color & 0x1f
-    mov r11,r11,lsl #1
-    add r11,r11,r11         @ r = ((r << 1) + r
+    
+    add r11,r11,r11,lsl #1  @ r = ((r << 1) + r
     add r11,r11,r4          @ r = ((r << 1) + r + ball_r)
     mov r11,r11,asr #2      @ r = ((r << 1) + r + ball_r) >> 2
     
