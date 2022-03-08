@@ -50,27 +50,26 @@ Continue_X_Loop:
     @orr r12,r12,r6,lsl #10
     
     and r11,r10,r9          @ int r = back_color & 0x1f
-    mov r11,r11,lsl #1
-    add r11,r11,r11         @ r = ((r << 1) + r
+    
+    add r11,r11,r11,lsl #1  @ r = ((r << 1) + r
     add r11,r11,r4          @ r = ((r << 1) + r + ball_r)
     mov r11,r11,asr #2      @ r = ((r << 1) + r + ball_r) >> 2
     
-    mov r12,r11
+    and r12,r10,r9,asr #5  @ int g = (back_color >> 5) & 0x1f
+    add r12,r12,r12,lsl #1 @ g = ((g << 1) + g
+    add r12,r12,r5         @ g = ((g << 1) + g + ball_g)
+    mov r12,r12,asr #2     @ g = ((g << 1) + g + ball_g) >> 2
 
-    @and r11,r10,r9,lsr #5  @ int g = (back_color >> 5) & 0x1f
-    @add r11,r11,r11,lsl #1 @ g = ((g << 1) + g
-    @add r11,r11,r5         @ g = ((g << 1) + g + ball_g)
-    @mov r11,r11,asr #2     @ g = ((g << 1) + g + ball_g) >> 2
+    orr r11,r11,r12,lsl #5 @ *dst = r | (g << 5)
 
-    @orr r12,r11,lsl #5     @ *dst = r | (g << 5)
+    and r12,r10,r9,asr #10 @ int b = (back_color >> 10) & 0x1f
+    add r12,r12,r12,lsl #1 @ b = ((b << 1) + b
+    add r12,r12,r6         @ b = ((b << 1) + b + ball_b)
+    mov r12,r12,asr #2     @ b = ((b << 1) + b + ball_b) >> 2
+    
+    orr r11,r11,r12,lsl #10    @ *dst = r | (g << 5) | (b<<10)
 
-    @and r11,r10,r9,lsr #10 @ int b = (back_color >> 10) & 0x1f
-    @add r11,r11,r11,lsl #1 @ b = ((b << 1) + b
-    @add r11,r11,r6         @ b = ((b << 1) + b + ball_b)
-    @mov r11,r11,asr #2     @ b = ((b << 1) + b + ball_b) >> 2
-    @orr r12,r11,lsl #10    @ *dst = r | (g << 5) | (b<<10)
-
-    strh r12,[r0]
+    strh r11,[r0]
 T_False:
     add r0,r0,#2            @ dst++
     add r8,r8,#1            @ x++
@@ -79,9 +78,8 @@ T_False:
 End_X_Loop:
 
     @ dst += stride_pixels - side;
-    sub r10,r2,#16
-    add r10,r10,r10
-    add r0,r0,r10
+    sub r3,r2,#16
+    add r0,r0,r3,lsl #1
 
     add r7,r7,#1            @ y++
 
