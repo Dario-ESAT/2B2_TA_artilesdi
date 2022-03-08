@@ -69,7 +69,7 @@ static void CleanScreen (unsigned short* screen)
 }
 
 int UpdateSnake (int keypad, Snake* snake, unsigned short* screen);
-/*
+
 {
   int crash = 0;
   Slab* slabs = snake->slabs;
