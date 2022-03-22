@@ -39,9 +39,9 @@ UpdateSnake:
 
     ldr r8,[r9,#4]      @ slabs[tail].y
 
-    mov r10,#240
+    mov r11,#240
 
-    mul r9,r8,r10       @ slabs[tail].y * 240
+    mul r9,r8,r11       @ slabs[tail].y * 240
     add r7,r7,r9        @ slabs[tail].x + slabs[tail].y * 240
     mov r7,r7,lsl #1    @ slabs[tail].x + slabs[tail].y * 240 * sizeof(short)(2)
     mov r8,#0
@@ -60,16 +60,15 @@ UpdateSnake:
     movge r5,#0         @ head_slab = 0
     strh r5,[r1,#6]     @ snake->head_slab = head_slab
 
-    str r10,[r1,#8]      @ int speed_x = snake->speed_x
-    str r6,[r1,#12]     @ int speed_y = snake->speed_y
+    ldr r10,[r1,#8]     @ int speed_x = snake->speed_x
+    ldr r6,[r1,#12]     @ int speed_y = snake->speed_y
 
     cmp r0,#0
-    bne If_keypad_0
+    beq If_keypad_0
     mov r10,#0           @ speed_x = speed_y = 0
     mov r6,#0
 
-    and r7,r0,#1        @ if (keypad & 1)
-    cmp r7,#0
+    ands r7,r0,#1        @ if (keypad & 1)
     movne r10,#1         @ speed_x = 1
 
     and r7,r0,#2        @ if (keypad & 2)
@@ -84,11 +83,13 @@ UpdateSnake:
     cmp r7,#0
     movne r6,#1         @ speed_y = 1
 
+    str r10,[r1,#8]     @ snake->speed_x = speed_x
+    str r6,[r1,#12]     @ snake->speed_y = speed_y
 If_keypad_0:
-    add r8,r8,r10        @ new_x += speed_x
+    add r8,r8,r10       @ new_x += speed_x
     add r9,r9,r6        @ new_y += speed_y
 
-    mul r7,r9,r10       @ new_y * 240
+    mul r7,r9,r11       @ new_y * 240
     add r7,r7,r8        @ new_x + new_y * 240
     add r7,r2,r7,lsl #1 @ unsigned short* head_pix = screen + (new_x + new_y * 240 * sizeof(short)(2))
 
@@ -96,7 +97,7 @@ If_keypad_0:
     cmp r11,#0          @ if (*head_pix == 0)
     bne If_head_pix_not_0
 
-    mov r10,#-1
+    mov r10,#-1         @ *head_pix = 0xffff;
     strh r10,[r7]
 
     add r7,r4,r5,lsl #3 @ labs[head_slab * sizeof(Slab)(8)]
@@ -108,6 +109,6 @@ If_keypad_0:
     ldmia   sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,r14}
     bx lr
 If_head_pix_not_0:
-    mov r0,#0 
+    mov r0,#1 
     ldmia   sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,r14}
     bx lr

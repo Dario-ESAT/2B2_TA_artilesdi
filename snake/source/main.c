@@ -69,7 +69,7 @@ static void CleanScreen (unsigned short* screen)
 }
 
 int UpdateSnake (int keypad, Snake* snake, unsigned short* screen);
-
+/*
 {
   int crash = 0;
   Slab* slabs = snake->slabs;
@@ -92,20 +92,20 @@ int UpdateSnake (int keypad, Snake* snake, unsigned short* screen);
 
   int speed_x = snake->speed_x;
   int speed_y = snake->speed_y;  
-  // if (keypad != 0) {
-  //   speed_x = speed_y = 0;
-  //   if (keypad & 1)
-  //     speed_x = 1;
-  //   if (keypad & 2)
-  //     speed_x = -1;
-  //   if (keypad & 4)
-  //     speed_y = -1;
-  //   if (keypad & 8)
-  //     speed_y = 1;
+  if (keypad != 0) {
+    speed_x = speed_y = 0;
+    if (keypad & 1)
+      speed_x = 1;
+    if (keypad & 2)
+      speed_x = -1;
+    if (keypad & 4)
+      speed_y = -1;
+    if (keypad & 8)
+      speed_y = 1;
 
-  //   snake->speed_x = speed_x;
-  //   snake->speed_y = speed_y;
-  // }
+    snake->speed_x = speed_x;
+    snake->speed_y = speed_y;
+  }
 
   // Head new pos.
   new_x += speed_x;
