@@ -29,7 +29,8 @@ typedef struct
 } tconway_line;
 
 
-static void SolveLine (tconway_line* line)
+static void SolveLine (tconway_line* line);
+/*
 {
   int x = 0;
   line->screen[0] = 0; // El 1er pixel se ignora
@@ -37,20 +38,20 @@ static void SolveLine (tconway_line* line)
 
   for (x = 1; x < (CONWAY_W - 1); x++) {
     // Contar cuantas celdas de alrededor estan vivas 
-    // int neighbours = 0;
-    // neighbours  = line->prev [x - 1] + line->prev [x] + line->prev [x + 1];
-    // neighbours += line->curr [x - 1]                  + line->curr [x + 1];
-    // neighbours += line->next [x - 1] + line->next [x] + line->next [x + 1];
+    int neighbours = 0;
+    neighbours  = line->prev [x - 1] + line->prev [x] + line->prev [x + 1];
+    neighbours += line->curr [x - 1]                  + line->curr [x + 1];
+    neighbours += line->next [x - 1] + line->next [x] + line->next [x + 1];
     int alive = line->curr [x];
-    // if (alive) {   
-    //   // Vivo: si tiene pocos vecinos o demasiados, morir
-    //   if ((neighbours < 2) || (neighbours > 3))
-    //       alive = 0; 
-    // } else {
-    //   // Muerto: si tiene 3 vecinos, renace
-    //   if (neighbours == 3)
-    //       alive = 1;
-    // } 
+    if (alive) {
+      // Vivo: si tiene pocos vecinos o demasiados, morir
+      if ((neighbours < 2) || (neighbours > 3))
+          alive = 0; 
+    } else {
+      // Muerto: si tiene 3 vecinos, renace
+      if (neighbours == 3)
+          alive = 1;
+    } 
     // Escribir resultado en el siguiente grid
     line->output[x] = alive;
     // Pintar un pixel en la pantalla, negro o blanco
@@ -62,7 +63,7 @@ static void SolveLine (tconway_line* line)
 
 }
 
-
+*/
 static void GameOfLife (unsigned char* prev_grid, unsigned char* curr_grid, 
                           unsigned short* screen)
 {
