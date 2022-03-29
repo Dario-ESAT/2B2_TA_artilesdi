@@ -71,16 +71,13 @@ UpdateSnake:
     ands r7,r0,#1        @ if (keypad & 1)
     movne r10,#1         @ speed_x = 1
 
-    and r7,r0,#2        @ if (keypad & 2)
-    cmp r7,#0
+    ands r7,r0,#2        @ if (keypad & 2)
     movne r10,#-1        @ speed_x = -1
 
-    and r7,r0,#4        @ if (keypad & 4)
-    cmp r7,#0
+    ands r7,r0,#4        @ if (keypad & 4)
     movne r6,#-1        @ speed_y = -1
 
-    and r7,r0,#8        @ if (keypad & 8)
-    cmp r7,#0
+    ands r7,r0,#8        @ if (keypad & 8)
     movne r6,#1         @ speed_y = 1
 
     str r10,[r1,#8]     @ snake->speed_x = speed_x
