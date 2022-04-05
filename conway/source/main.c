@@ -30,7 +30,7 @@ typedef struct
 
 
 static void SolveLine (tconway_line* line);
-/*
+
 {
   int x = 0;
   line->screen[0] = 0; // El 1er pixel se ignora
