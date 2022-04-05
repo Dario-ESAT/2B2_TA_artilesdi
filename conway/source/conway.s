@@ -90,17 +90,11 @@ Continue_on_curr:
     strb r7,[r4,r6]         @ line->output[x] = alive;
 
     cmp r7,#0
-    mov r8,r6,lsl #1
-    beq Is_alive_screen     @ line->screen[x] = alive ? 0x7fff : 0x0;
+    moveq r7,#0
+    movne r7,#0xff
+    orrne r7,r7,#0x7f00
+    strh r7,[r5],#2         @ line->screen[x] = alive ? 0x7fff : 0x0;
 
-    mov r7,#0
-    strh r7,[r5,r8]         @ line->screen[x] = 0x0;
-    b Continue_on_screen
-Is_alive_screen:
-    mov r7,#0xff
-    orr r7,r7,#0x7f00
-    strh r7,[r5,r8]         @ line->screen[x] = 0x7fff;
-Continue_on_screen:
     add r6,r6,#1
     b Start_of_for
 End_for:
