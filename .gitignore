@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+*.map
+*.elf
+*.gba
