@@ -33,7 +33,8 @@ static const unsigned short _points_colors [] =
 int Closest (const TPoint* points_array, int npoints, int x, int y);
 
 void Voronoid (unsigned short* screen, const TPoint* points, int npoints, 
-               const unsigned short* palette)
+               const unsigned short* palette);
+/*
 {
   int x,y;
   for(y = 0; y<SCREEN_HEIGHT; y++) {
@@ -46,7 +47,7 @@ void Voronoid (unsigned short* screen, const TPoint* points, int npoints,
     }
   }
 }
-
+*/
 
 
 int main()
