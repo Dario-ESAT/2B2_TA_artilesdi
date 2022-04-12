@@ -29,12 +29,11 @@ typedef struct
 } tconway_line;
 
 
-static void SolveLine (tconway_line* line);
-/*
+static void SolveLine (tconway_line* line)
 {
   int x = 0;
   line->screen[0] = 0; // El 1er pixel se ignora
-  line->output[0] = line->curr[0];
+  line->output[0] = line->curr[0];  
 
   for (x = 1; x < (CONWAY_W - 1); x++) {
     // Contar cuantas celdas de alrededor estan vivas 
@@ -43,7 +42,7 @@ static void SolveLine (tconway_line* line);
     neighbours += line->curr [x - 1]                  + line->curr [x + 1];
     neighbours += line->next [x - 1] + line->next [x] + line->next [x + 1];
     int alive = line->curr [x];
-    if (alive) {
+    if (alive) {   
       // Vivo: si tiene pocos vecinos o demasiados, morir
       if ((neighbours < 2) || (neighbours > 3))
           alive = 0; 
@@ -62,7 +61,7 @@ static void SolveLine (tconway_line* line);
   line->screen[x] = 0;
 
 }
-*/
+
 
 static void GameOfLife (unsigned char* prev_grid, unsigned char* curr_grid, 
                           unsigned short* screen)

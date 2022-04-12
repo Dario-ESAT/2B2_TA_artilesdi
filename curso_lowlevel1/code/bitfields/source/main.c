@@ -14,8 +14,7 @@
 #define RGB16(R,G,B)  ((R)+((G)<<5)+((B)<<10)) 
 
 
-void Paint (unsigned short* dst, unsigned char* sprite, int stride_pixels, unsigned int color);
-/*
+void Paint (unsigned short* dst, unsigned char* sprite, int stride_pixels, unsigned int color)
 {
   int ball_r = color & 0x1f;
   int ball_g = (color >> 5) & 0x1f;
@@ -36,15 +35,14 @@ void Paint (unsigned short* dst, unsigned char* sprite, int stride_pixels, unsig
         g = ((g << 1) + g + ball_g) >> 2;
         b = ((b << 1) + b + ball_b) >> 2;
         // Reassemble color
-        *dst = r | (g << 5);// | (b<<10);
-        //*dst = ball_r | (ball_g << 5) | (ball_b<<10);
+        *dst = r | (g << 5) | (b<<10);
       }
       dst++;
     }
     dst += stride_pixels - side;
   } 
 }
-*/
+
 
 static void FillWithCircle (unsigned char* sprite, int side, int rad)
 {

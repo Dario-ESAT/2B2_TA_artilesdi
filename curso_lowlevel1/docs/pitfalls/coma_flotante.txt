@@ -1,0 +1,68 @@
+
+01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
+
+ -----------------------------
+ COMA FLOTANTE, FLOATING POINT
+ -----------------------------
+
+
+La coma flotante describe un formato numerico especial en el que solo se 
+guardan los digitos mas significativos (los mayores) del numero.
+Si imaginamos una (hipotetica) coma flotante decimal de 4 cifras, los 
+siguientes numeros se recortarian de esta manera:
+
+12,34567  -> 12,34
+0,0012345 -> 0.001234
+12345678  -> 12340000
+
+Podemos observar que ademas de las 4 cifras mas significativas, tambien
+necesitamos guardar su orden de magnitud, tambien conocida como su potencia.
+
+El numero en coma flotante consta por tanto de:
+
+Mantisa   -> las cifras mas significativas
+Exponente -> expresa la potencia con la que multiplcamos la mantisa para obtener 
+             el numero
+
+Este formato esta muy relacionado con el llamado "notacion cientifica":
+
+1.5x10^5 = 150000 
+
+La principal diferencia esta en la base de la potencia. En notacion cientifica
+es 10, mientras que en coma flotante se usa 2.
+La razon es la sencillez con la que el ordenador puede resolver la potencia,
+ya que:
+
+2^7 = 1<<7
+
+Los formatos mas comunes son:
+
+32 bits: 23 mantisa + 1 signo + 8 exp. Conocido como "single precision", en C "float".
+64 bits: 52 mantisa + 1 signo + 11 exp. Conocido como "double precision", en C "double".
+80 bits (10 bytes): 64 mantisa, 1 signo, 15 exponente. "Extended precision". NO tiene soporte en C.
+
+En general se recomienda (por velocidad y consumo de memoria) usar single siempre que es posible.
+
+
+- Tolerancia/precision
+
+To illustrate, assign 2147483647 (the largest signed 32-bit integer) to a 32-bit float variable (x, say), and print it. You'll see 2147483648. Now print x - 64. Still 2147483648. Now print x-65 and you'll get 2147483520! Why? Because the spacing between adjacent floats in that range is 128, and floating-point operations round to the nearest floating-point number.
+
+IEEE floating-point numbers are fixed-precision numbers based on base-two scientific notation: 1.d1d2...dp-1 × 2e, where p is the precision (24 for float, 53 for double). The spacing between two consecutive numbers is 21-p+e, which can be safely approximated by ε|x|, where ε is the machine epsilon (21-p).
+
+- Smearing / catastrophic cancellation
+
+Since floating-point numbers are approximations of real numbers, there is inevitably a little error present. This error, called roundoff, can lead to surprising results. When you subtract nearly equal numbers, for example, the most significant digits cancel each other out, so what was the least significant digit (where the roundoff error resides) gets promoted to the most significant position in the floating-point result, essentially contaminating any further related computations (a phenomenon known as smearing). You need to look closely at your algorithms to prevent such catastrophic cancellation. To illustrate, consider solving the equation x2 - 100000x + 1 = 0 with the quadratic formula. Since the operands in the expression -b + sqrt(b2 - 4) are nearly equal in magnitude, you can instead compute the root r1 = -b - sqrt(b2 - 4), and then obtain r2 = 1/r1, since for any quadratic equation, ax2 + bx + c = 0, the roots satisfy r1r2 = c/a.
+Smearing can occur in even more subtle ways. Suppose a library naively computes ex by the formula 1 + x + x2/2 + x3/3! + .... This works fine for positive x, but consider what happens when x is a large negative number. The even-powered terms result in large positive numbers, and subtracting the odd-powered magnitudes will not even affect the result. The problem here is that the roundoff in the large, positive terms is in a digit position of much greater significance than the true answer. The answer diverges toward positive infinity! The solution here is also simple: for negative x, compute ex = 1/e|x|.
+
+- NaN, +/-Inf. Deteccion.
+
+- Epsilon.
+
+- Asociatividad
+
+  flags "fast-math"
+
+- Implementaciones no standard, precauciones.
+
+
