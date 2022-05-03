@@ -14,6 +14,8 @@
 @ r3 -> const unsigned short* palette
 .globl Voronoid
 @ .extern Closest
+
+@ Call implementation
 @ Voronoid:
     stmdb   sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,r14}
 
@@ -57,6 +59,13 @@
     bx lr
 
 
+
+
+
+
+
+
+@ Inline implementation
 Voronoid:
     stmdb   sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,r14}
 
@@ -70,48 +79,46 @@ Start_ForX:
     bge End_forX
 
     
-    ldr r6,[r1]             @ points_array[0]
+@ Closest() {
+    mov r11,#0              @ int closest = 0;
+    ldr r7,[r1]             @ points_array[0].x
+    sub r8,r7,r5            @ int xd = points_array[0].x - x
+    ldr r7,[r1,#4]          @ points_array[0].y
+    sub r9,r7,r4            @ int yd = points_array[0].y - y
 
-    ldr r7,[r6]             @ points_array[0].x
-    sub r8,r7,r5            @ points_array[0].x - x
-    ldr r7,[r6,#4]          @ points_array[0].y
-    sub r9,r7,r4            @ points_array[0].y - y
-
-    mul r10,r8,r8           @ xd * xd
-    mul r11,r9,r9           @ yd * yd
-    add r10,r10,r11         @ min_dist = xd * xd + yd * yd
-
+    mul r7,r8,r8            @ xd * xd
+    mul r10,r9,r9           @ yd * yd
+    add r7,r7,r10           @ min_dist = xd * xd + yd * yd
+    add r1,r1,#8
     mov r6,#1               @ i = 1
 Start_ForI:
     cmp r6,r2               @ i < npoints
     blt End_ForI
 
-    ldr r12,[r1,r6,lsl #2]  @ points_array[i]
-
-    ldr r11,[r12]            @ points_array[i].x
-    sub r8,r11,r5           @ points_array[i].x - x
-    ldr r11,[r12,#4]        @ points_array[i].y
-    sub r9,r11,r4           @ points_array[i].y - y
+    ldr r10,[r1]            @ points_array[i].x
+    sub r8,r10,r5           @ xd = points_array[i].x - x
+    ldr r10,[r1,#4]         @ points_array[i].y
+    sub r9,r10,r4           @ yd = points_array[i].y - y
     
     mul r12,r8,r8           @ xd * xd
-    mul r11,r9,r9           @ yd * yd
-    add r11,r10,r11         @ int dist = xd * xd + yd * yd;
+    mul r10,r9,r9           @ yd * yd
+    add r10,r12,r10          @ int dist = xd * xd + yd * yd;
     
-    cmp r11,r10             @ if (dist < min_dist)
-    movlt r10,r11           @ min_dist = dist;
-    movlt r14,r6            @ closest = i;
-      
+    cmp r10,r7              @ if (dist < min_dist)
+    movlt r7,r10            @ min_dist = dist;
+    movlt r11,r6            @ closest = i;
+
+    add r1,r1,#8
     add r6,r6,#1            @ i++
     b Start_ForI
 End_ForI:
 
+    mov r11,r11,lsl #1        @ palette [c]
+    ldrh r11,[r3,r11]
 
-    mov r4,r4,lsl #1        @ palette [c]
-    ldrh r14,[r7,r0]
-    
-    strh r10,[r0]           @ *screen = palette [c]
+@ return closest; }
 
-    add r0,r0,#2            @ screen++
+    strh r7,[r0],#2           @ *screen = palette [c]; screen++;
 
     add r5,r5,#1            @ x++
     b Start_ForX
