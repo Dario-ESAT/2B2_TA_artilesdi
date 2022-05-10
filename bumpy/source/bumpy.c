@@ -77,6 +77,9 @@ static void BumpMap (unsigned char* dst,
   }
 }
 
+void checkshit(int now) {
+  while (now == gDisplayCount);
+}
 
 int main()
 {
@@ -144,7 +147,9 @@ int main()
     Flip ();
 
     // If we were faster the 60 FPS, wait so we don't draw on the display
-    while (now == gDisplayCount);
+    checkshit(now);
+
+
   }
 #endif
 }

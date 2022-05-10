@@ -70,6 +70,7 @@ Voronoid:
     stmdb   sp!,{r4,r5,r6,r7,r8,r9,r10,r11,r12,r14}
 
     mov r4,#0               @ y = 0
+    mov r14,r1
 Start_ForY:
     cmp r4, #160            @ y<SCREEN_HEIGHT
     bge End_forY
@@ -78,7 +79,7 @@ Start_ForX:
     cmp r5, #240            @ x<SCREEN_WIDTH
     bge End_forX
 
-    
+    mov r1,r14
 @ Closest() {
     mov r11,#0              @ int closest = 0;
     ldr r7,[r1]             @ points_array[0].x
@@ -102,7 +103,7 @@ Start_ForI:
     
     mul r12,r8,r8           @ xd * xd
     mul r10,r9,r9           @ yd * yd
-    add r10,r12,r10          @ int dist = xd * xd + yd * yd;
+    add r10,r12,r10         @ int dist = xd * xd + yd * yd;
     
     cmp r10,r7              @ if (dist < min_dist)
     movlt r7,r10            @ min_dist = dist;
@@ -113,12 +114,12 @@ Start_ForI:
     b Start_ForI
 End_ForI:
 
-    mov r11,r11,lsl #1        @ palette [c]
-    ldrh r11,[r3,r11]
+    add r11,r3,r11,lsl #1   @ palette [c]
+    ldrh r11,[r11]
 
 @ return closest; }
 
-    strh r7,[r0],#2           @ *screen = palette [c]; screen++;
+    strh r11,[r0],#2        @ *screen = palette [c]; screen++;
 
     add r5,r5,#1            @ x++
     b Start_ForX
