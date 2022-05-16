@@ -30,7 +30,7 @@ typedef struct {
 void UpdateParticles (Particle* particles, int nparticles, unsigned short* screen);
 /*
 {
-  //do {
+  do {
     if (particles->alive) {
       // Mirar si hay sitio debajo
       int x = particles->x;
@@ -57,10 +57,10 @@ void UpdateParticles (Particle* particles, int nparticles, unsigned short* scree
 
     }
 
-    //particles++;
-    //nparticles--;
+    particles++;
+    nparticles--;
 
-  //} while (nparticles != 0);  // Do while there is particles left
+  } while (nparticles != 0);  // Do while there is particles left
 }
 */
 
