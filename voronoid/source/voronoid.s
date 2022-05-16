@@ -94,7 +94,7 @@ Start_ForX:
     mov r6,#1               @ i = 1
 Start_ForI:
     cmp r6,r2               @ i < npoints
-    blt End_ForI
+    bge End_ForI
 
     ldr r10,[r1]            @ points_array[i].x
     sub r8,r10,r5           @ xd = points_array[i].x - x
