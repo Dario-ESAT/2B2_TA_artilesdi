@@ -1,4 +1,4 @@
-const unsigned char light[512 * 512] = {
+const unsigned char gLight[512 * 512] = {
     0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,

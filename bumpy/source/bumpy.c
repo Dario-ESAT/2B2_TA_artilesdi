@@ -14,42 +14,45 @@
 #define GBA_SCREEN_WIDTH  (240)
 #define GBA_SCREEN_HEIGHT (160)
 
-extern const signed short bump [GBA_SCREEN_WIDTH * GBA_SCREEN_HEIGHT];
-extern const unsigned char light [512 * 512];
-extern const unsigned short pal [256];
+extern const signed short gBump [GBA_SCREEN_WIDTH * GBA_SCREEN_HEIGHT];
+extern const unsigned char gLight [512 * 512];
+extern const unsigned short gPal [256];
 
-static unsigned int FastAsm [128];
+static unsigned int gFastAsm [128];
 
 // GBA's graphics chip is controled by registers located at 0x4000000 
-static volatile unsigned int* video_regs = (volatile unsigned int*) 0x4000000; // video registers address
+static volatile unsigned int* gVideoRegs = (volatile unsigned int*) 0x4000000; // video registers address
 // GBA's VRAM is located at address 0x6000000. 
 // Screen memory in MODE 4 is located at the same place
-static volatile unsigned char* screen0 = (volatile unsigned char*)0x06000000;
-static volatile unsigned char* screen1 = (volatile unsigned char*)0x0600a000;
+static volatile unsigned char* gScreen0 = (volatile unsigned char*)0x06000000;
+static volatile unsigned char* gScreen1 = (volatile unsigned char*)0x0600a000;
 
 // ---------------------------------------------------------------------------
 
-static int screen_buffers = 0;
+volatile static int gDisplayCount = 0;
+volatile static int gScreenBuffers = 0;
 
 unsigned char* GetBackBuffer()
 {
-  if (screen_buffers & 1)
-    return (unsigned char*)screen0;
+  if (gScreenBuffers & 1)
+    return (unsigned char*)gScreen0;
   else 
-    return (unsigned char*)screen1;
+    return (unsigned char*)gScreen1;
 }
 
 void Flip ()
 {
-  screen_buffers++;
+  gScreenBuffers++;
 } 
 
 void VBlankIntr (void)
 {
-  if (screen_buffers & 1) 
-    video_regs[0] |= 0x10;
+  gDisplayCount++;
+
+  if ((gScreenBuffers & 1) != 0) 
+    gVideoRegs[0] |= 0x10;
   else
-    video_regs[0] &= ~0x10;
+    gVideoRegs[0] &= ~0x10;
 }
 
 // ---------------------------------------------------------------------------
@@ -74,6 +77,9 @@ static void BumpMap (unsigned char* dst,
   }
 }
 
+void checkshit(int now) {
+  while (now == gDisplayCount);
+}
 
 int main()
 {
@@ -82,17 +88,17 @@ int main()
   // Palette memory 
   volatile unsigned short* palette = (unsigned short*)0x5000000;
   // Configure the screen at mode4, bg2 on (8 bits LUT palette based) 
-  video_regs[0] = 0x404; // mode4, bg2 on
+  gVideoRegs[0] = 0x404; // mode4, bg2 on
 
-  // Fill the palette with grey scale colors
+  // Copy the palette to fast ram
   for (i=0; i<256; i++)
-    palette[i] = pal[i];
+    palette[i] = gPal[i];
 
   // Copy inner loop to fast memory
-  memcpy(FastAsm, BumpMap, 256); 
-  void (*fun_ptr)(unsigned char* dst,const signed short* bump_src, const unsigned char* light_src) = (void*)FastAsm;
+  memcpy(gFastAsm, BumpMap, 256); 
+  void (*fun_ptr)(unsigned char* dst,const signed short* bump_src, const unsigned char* light_src) = (void*)gFastAsm;
 
-#if 1
+#if 0
 
   // SIMPLE VERSION WITHOUT INTERRUPTS
 
@@ -100,17 +106,17 @@ int main()
   while(1) { 
 
     // Swap frame buffers
-    volatile unsigned char* t = screen0;
-    screen0 = screen1;
-    screen1 = t;
+    volatile unsigned char* t = gScreen0;
+    gScreen0 = gScreen1;
+    gScreen1 = t;
 
     int u = (int)(256.0f - 120.0f + sin(a * 3.0f) * 100.0f);
     int v = (int)(256.0f - 80.0f + cos(a * 1.0f) * 100.0f);
     a += 0.05f;
-    unsigned char* l = (unsigned char*)&light [u + v * 512];
-    fun_ptr ((unsigned char*)screen0, bump, l);
+    unsigned char* l = (unsigned char*)&gLight [u + v * 512];
+    fun_ptr ((unsigned char*)gScreen0, gBump, l);
 
-    video_regs[0] ^= 0x10;
+    gVideoRegs[0] ^= 0x10;
   }
 
 #else
@@ -126,14 +132,24 @@ int main()
   float a = 0.0f;
   while(1) { 
 
+
+
     int u = (int)(256.0f - 120.0f + sin(a * 3.0f) * 100.0f);
     int v = (int)(256.0f - 80.0f + cos(a * 1.0f) * 100.0f);
-    a += 0.05f;
+    a += 0.1f;
   
-    unsigned char* l = (unsigned char*)&light [u + v * 512];
-    fun_ptr (GetBackBuffer(), bump, l);
+    unsigned char* l = (unsigned char*)&gLight [u + v * 512];
+    fun_ptr (GetBackBuffer(), gBump, l);
 
-    Flip ();    
+
+    int now = gDisplayCount;
+
+    Flip ();
+
+    // If we were faster the 60 FPS, wait so we don't draw on the display
+    checkshit(now);
+
+
   }
 #endif
 }

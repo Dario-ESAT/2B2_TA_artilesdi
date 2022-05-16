@@ -34,3 +34,5 @@
 *.map
 *.elf
 *.gba
+
+.vscode
